@@ -23,4 +23,8 @@ public class CatalogElement {
 
     @Enumerated(EnumType.STRING)
     private LifecycleStatus status;
+
+    public CatalogElement(LifecycleStatus status) {
+        this.status = status;
+    }
 }

@@ -31,7 +31,7 @@ class CatalogElementServiceTest {
 
     @Test
     void shouldReturnCatalogElementWhenFound() {
-        CatalogElement element = new CatalogElement(1L, null);
+        CatalogElement element = new CatalogElement(1L, LifecycleStatus.IN_STUDY);
         when(repository.findById(1L)).thenReturn(Optional.of(element));
 
         CatalogElement result = service.getCatalogElementById(1L);
