@@ -4,6 +4,8 @@ import com.pvt.catalog_lifecycle.model.CatalogElement;
 import com.pvt.catalog_lifecycle.model.LifecycleStatus;
 import com.pvt.catalog_lifecycle.repository.CatalogElementRepository;
 import com.pvt.catalog_lifecycle.services.CatalogElementService;
+import com.pvt.catalog_lifecycle.utilities.custom_exceptions.CatalogElementNotFoundException;
+import com.pvt.catalog_lifecycle.utilities.custom_exceptions.InvalidStatusTransitionException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -40,10 +42,10 @@ class CatalogElementServiceTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenCatalogElementNotFound() {
+    void shouldThrowCatalogElementNotFoundExceptionWhenCatalogElementNotFound() {
         when(repository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> service.getCatalogElementById(1L));
+        assertThrows(CatalogElementNotFoundException.class, () -> service.getCatalogElementById(1L));
     }
 
     @Test
@@ -124,29 +126,29 @@ class CatalogElementServiceTest {
     }
 
     @Test
-    void shouldThrowExceptionForInvalidTransitionFromInStudyToActive() {
+    void shouldThrowInvalidStatusTransitionExceptionForInvalidTransitionFromInStudyToActive() {
         CatalogElement element = new CatalogElement(1L, LifecycleStatus.IN_STUDY);
         when(repository.findById(1L)).thenReturn(Optional.of(element));
 
-        assertThrows(IllegalArgumentException.class, () -> service.validateAndUpdateStatus(element, LifecycleStatus.ACTIVE));
+        assertThrows(InvalidStatusTransitionException.class, () -> service.validateAndUpdateStatus(element, LifecycleStatus.ACTIVE));
         verify(repository, never()).save(element);
     }
 
     @Test
-    void shouldThrowExceptionWhenTransitionFromRejected() {
+    void shouldThrowInvalidStatusTransitionExceptionWhenTransitionFromRejected() {
         CatalogElement element = new CatalogElement(1L, LifecycleStatus.REJECTED);
         when(repository.findById(1L)).thenReturn(Optional.of(element));
 
-        assertThrows(IllegalArgumentException.class, () -> service.validateAndUpdateStatus(element, LifecycleStatus.IN_STUDY));
+        assertThrows(InvalidStatusTransitionException.class, () -> service.validateAndUpdateStatus(element, LifecycleStatus.IN_STUDY));
         verify(repository, never()).save(element);
     }
 
     @Test
-    void shouldThrowExceptionWhenTransitionFromObsolete() {
+    void shouldThrowInvalidStatusTransitionExceptionWhenTransitionFromObsolete() {
         CatalogElement element = new CatalogElement(1L, LifecycleStatus.OBSOLETE);
         when(repository.findById(1L)).thenReturn(Optional.of(element));
 
-        assertThrows(IllegalArgumentException.class, () -> service.validateAndUpdateStatus(element, LifecycleStatus.ACTIVE));
+        assertThrows(InvalidStatusTransitionException.class, () -> service.validateAndUpdateStatus(element, LifecycleStatus.ACTIVE));
         verify(repository, never()).save(element);
     }
 }

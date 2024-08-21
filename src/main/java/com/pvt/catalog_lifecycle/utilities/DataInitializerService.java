@@ -1,4 +1,4 @@
-package com.pvt.catalog_lifecycle;
+package com.pvt.catalog_lifecycle.utilities;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
